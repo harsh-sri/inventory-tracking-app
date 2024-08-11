@@ -39,7 +39,7 @@ export class StockService {
     updateStockDto: UpdateStockDto,
   ): Promise<BaseResponse> {
     try {
-      let prodId = productId.productId;
+      const prodId = productId.productId;
       // 1. fetch product stock data from db
       const { warehouseId, productCount } = updateStockDto;
       this.logger.debug("request payload", {

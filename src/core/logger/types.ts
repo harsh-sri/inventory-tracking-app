@@ -1,1 +1,1 @@
-export const LOGGER_INSTANCE = Symbol.for('LOGGER_INSTANCE');
+export const LOGGER_INSTANCE = Symbol.for("LOGGER_INSTANCE");

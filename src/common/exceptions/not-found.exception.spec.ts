@@ -1,12 +1,12 @@
-import { HttpStatus } from '@nestjs/common';
-import { NotFoundException } from './not-found.exception';
+import { HttpStatus } from "@nestjs/common";
+import { NotFoundException } from "./not-found.exception";
 
-describe('Exceptions: NotFound', () => {
-  it('should format the error', async () => {
+describe("Exceptions: NotFound", () => {
+  it("should format the error", async () => {
     let error;
 
     const details = {
-      ['param.id']: 'not found',
+      ["param.id"]: "not found",
     };
 
     try {
@@ -22,13 +22,13 @@ describe('Exceptions: NotFound', () => {
     }
   });
 
-  it('should format both error and message', async () => {
+  it("should format both error and message", async () => {
     let error;
 
     const details = {
-      ['param.id']: 'not found',
+      ["param.id"]: "not found",
     };
-    const message = 'Sorry! requested resource not found.';
+    const message = "Sorry! requested resource not found.";
 
     try {
       throw new NotFoundException({

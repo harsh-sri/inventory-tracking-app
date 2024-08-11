@@ -1,4 +1,4 @@
-import { IBaseHttpExceptionDetails } from './base-exception-details.interface';
+import { IBaseHttpExceptionDetails } from "./base-exception-details.interface";
 
 export interface IBaseHttpExceptionOptions {
   details?: IBaseHttpExceptionDetails;

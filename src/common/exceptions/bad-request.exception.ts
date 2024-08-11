@@ -1,6 +1,6 @@
-import { HttpStatus } from '@nestjs/common';
-import { BaseHttpException } from './base-http.exception';
-import { IBaseHttpExceptionOptions } from './interfaces/base-exception-options.interface';
+import { HttpStatus } from "@nestjs/common";
+import { BaseHttpException } from "./base-http.exception";
+import { IBaseHttpExceptionOptions } from "./interfaces/base-exception-options.interface";
 
 export class BadRequestException extends BaseHttpException {
   constructor(options: IBaseHttpExceptionOptions) {

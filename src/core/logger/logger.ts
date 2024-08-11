@@ -1,7 +1,7 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
-import * as bunyan from 'bunyan';
-import { ILog } from './interface/log.interface';
-import { LOGGER_INSTANCE } from './types';
+import { Inject, Injectable, Scope } from "@nestjs/common";
+import * as bunyan from "bunyan";
+import { ILog } from "./interface/log.interface";
+import { LOGGER_INSTANCE } from "./types";
 
 @Injectable({
   scope: Scope.REQUEST,

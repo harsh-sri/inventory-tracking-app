@@ -1,8 +1,8 @@
-import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '../config';
-import * as bunyan from 'bunyan';
-import { AppLogger } from './logger';
-import { LOGGER_INSTANCE } from './types';
+import { Global, Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "../config";
+import * as bunyan from "bunyan";
+import { AppLogger } from "./logger";
+import { LOGGER_INSTANCE } from "./types";
 
 @Global()
 @Module({

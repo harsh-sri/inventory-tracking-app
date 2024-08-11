@@ -1,11 +1,11 @@
-import { HttpStatus } from '@nestjs/common';
-import { UnExpectedErrorException } from './unexpected-error.exception';
+import { HttpStatus } from "@nestjs/common";
+import { UnExpectedErrorException } from "./unexpected-error.exception";
 
-describe('Exception: Unexpected Error', () => {
-  it('should format error correctly', async () => {
+describe("Exception: Unexpected Error", () => {
+  it("should format error correctly", async () => {
     let error;
     const details = {
-      ['msg.details']: 'something went wrong',
+      ["msg.details"]: "something went wrong",
     };
 
     try {
@@ -21,13 +21,13 @@ describe('Exception: Unexpected Error', () => {
     }
   });
 
-  it('should format error and message both', async () => {
+  it("should format error and message both", async () => {
     let error;
     const details = {
-      msg: 'something went wrong',
+      msg: "something went wrong",
     };
 
-    const message = 'internal server error';
+    const message = "internal server error";
 
     try {
       throw new UnExpectedErrorException({

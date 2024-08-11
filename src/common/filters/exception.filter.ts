@@ -4,11 +4,11 @@ import {
   ExceptionFilter as NestExceptionFilter,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { instanceToPlain, plainToClass } from 'class-transformer';
-import { get as getProperty } from 'lodash';
-import { BaseHttpException } from '../exceptions/base-http.exception';
-import { ExceptionSerializer } from './serializers/exception.serializer';
+} from "@nestjs/common";
+import { instanceToPlain, plainToClass } from "class-transformer";
+import { get as getProperty } from "lodash";
+import { BaseHttpException } from "../exceptions/base-http.exception";
+import { ExceptionSerializer } from "./serializers/exception.serializer";
 
 @Catch()
 export class ExceptionFilter implements NestExceptionFilter<BaseHttpException> {
@@ -20,7 +20,7 @@ export class ExceptionFilter implements NestExceptionFilter<BaseHttpException> {
         ? exception.getStatus()
         : getProperty(
             exception,
-            'response.code',
+            "response.code",
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
 
@@ -30,10 +30,10 @@ export class ExceptionFilter implements NestExceptionFilter<BaseHttpException> {
 
     const serializedResponse = plainToClass(ExceptionSerializer, {
       code: status,
-      details: getProperty(exception, 'response.details'),
+      details: getProperty(exception, "response.details"),
     });
     const res = instanceToPlain(serializedResponse);
-    Logger.log('HTTP ERROR RESPONSE', { res });
+    Logger.log("HTTP ERROR RESPONSE", { res });
     response.status(status).json(res);
   }
 }

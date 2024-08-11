@@ -1,11 +1,11 @@
-import { HttpStatus } from '@nestjs/common';
-import { BadRequestException } from './bad-request.exception';
+import { HttpStatus } from "@nestjs/common";
+import { BadRequestException } from "./bad-request.exception";
 
-describe('Exception: Bad Request', () => {
-  it('should format error details', async () => {
+describe("Exception: Bad Request", () => {
+  it("should format error details", async () => {
     let error;
     const details = {
-      ['param.Id']: 'is not valid',
+      ["param.Id"]: "is not valid",
     };
 
     try {
@@ -20,13 +20,13 @@ describe('Exception: Bad Request', () => {
     }
   });
 
-  it('should pass error & message details', async () => {
+  it("should pass error & message details", async () => {
     let error;
     const details = {
-      ['param.Id']: 'is not valid',
+      ["param.Id"]: "is not valid",
     };
 
-    const message = 'input validation failed!';
+    const message = "input validation failed!";
 
     try {
       throw new BadRequestException({ details, message });

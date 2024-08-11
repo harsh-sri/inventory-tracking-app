@@ -1,6 +1,6 @@
-import { ApiHideProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import docs from '../error-code.map';
-import { ExceptionSerializer } from '../exception.serializer';
+import { ApiHideProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import docs from "../error-code.map";
+import { ExceptionSerializer } from "../exception.serializer";
 
 export class NotFoundErrorDocs extends ExceptionSerializer {
   get message(): string {
@@ -11,7 +11,7 @@ export class NotFoundErrorDocs extends ExceptionSerializer {
   static readonly description = docs[404].title;
 
   @ApiPropertyOptional({
-    type: 'string',
+    type: "string",
     example: docs[404].code,
     enum: [docs[404].code],
     default: docs[404].code,
@@ -19,7 +19,7 @@ export class NotFoundErrorDocs extends ExceptionSerializer {
   code: string;
 
   @ApiPropertyOptional({
-    type: 'string',
+    type: "string",
     example: docs[404].message,
     enum: [docs[404].message],
     default: docs[404].message,
