@@ -12,6 +12,7 @@ import {
 describe("NotificationService", () => {
   let service: NotificationService;
   let logger: AppLogger;
+  // eslint-disable-next-line
   let config: ConfigService;
   let httpService: HttpService;
 

@@ -2,7 +2,7 @@ import * as Joi from "joi";
 import { LogLevel } from "../logger/enums/log-level.enum";
 export const schema = Joi.object({
   NODE_ENV: Joi.string().valid("test", "dev", "prod").default("dev"),
-  PORT: Joi.number().default(3007),
+  PORT: Joi.number().default(3000),
   BASE_URL: Joi.string().default("http://localhost"),
   // MongoDB
   MONGO_URI: Joi.string()

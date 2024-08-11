@@ -53,7 +53,7 @@ describe("Config Schema", () => {
 
     it("should set value if defined", () => {
       delete process.env.PORT;
-      expect(schema.validate(process.env).value["PORT"]).toEqual(3007);
+      expect(schema.validate(process.env).value["PORT"]).toEqual(3000);
     });
   });
 

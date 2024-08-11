@@ -11,23 +11,23 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - mongo-data:/data/db
-  otrium-assignment:
+  inventory-tracking-service:
     build:
       context: .
       dockerfile: Dockerfile.local
-    container_name: otrium-assignment
+    container_name: inventory-tracking-service
     ports:
-      - "3007:3007"
+      - "3000:3000"
       - "9228:9228"
     env_file:
       - ./.env
     volumes:
-      - ./src:/otrium-assignment/src
-      - ./static:/otrium-assignment/static
-      - ./test:/otrium-assignment/test
-      - ./tsconfig.json:/otrium-assignment/tsconfig.json
-      - ./tsconfig.build.json:/otrium-assignment/tsconfig.build.json
-      - ./nest-cli.json:/otrium-assignment/nest-cli.json
+      - ./src:/inventory-tracking-service/src
+      - ./static:/inventory-tracking-service/static
+      - ./test:/inventory-tracking-service/test
+      - ./tsconfig.json:/inventory-tracking-service/tsconfig.json
+      - ./tsconfig.build.json:/inventory-tracking-service/tsconfig.build.json
+      - ./nest-cli.json:/inventory-tracking-service/nest-cli.json
     restart: always
 
 volumes:

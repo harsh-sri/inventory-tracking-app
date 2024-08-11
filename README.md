@@ -2,7 +2,7 @@
 
 ### Challenge
 
-Develop a simple inventory tracking application with two main functionalities
+Develop a simple Inventory Tracking Servicelication with two main functionalities
 
 - Receiving invetory update
 - Sending Notification
@@ -60,13 +60,13 @@ Develop a simple inventory tracking application with two main functionalities
 1. Clone the repo
 
 ```bash
-$ git clone {repo_url}
+$ git clone https://github.com/harsh-sri/inventory-tracking-app
 ```
 
 2. Switch to project directory
 
 ```bash
-$ cd cloned_app
+$ cd inventory-tracking-app
 ```
 
 ### Notification Webhook Simulation
@@ -120,7 +120,7 @@ $ cd cloned_app
 
 ## Running the app
 
-Start the application using Docker
+Start the application using Docker. App will run on PORT 3000
 
 ```bash
 $ docker-compose up --build
@@ -129,7 +129,7 @@ $ docker-compose up --build
 ### Sample Request
 
 ```bash
-$ curl --location --request PATCH 'localhost:3007/api/v1/stock/2c038cbc-0164-4ffd-a8a6-9a7cdbe8e703' \
+$ curl --location --request PATCH 'localhost:3000/api/v1/stock/2c038cbc-0164-4ffd-a8a6-9a7cdbe8e703' \
 --header 'Content-Type: application/json' \
 --data '{
     "warehouseId": "56b10104-b4c3-4da0-9618-3bc0750d1f27",

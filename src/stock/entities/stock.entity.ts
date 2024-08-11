@@ -1,4 +1,4 @@
-import { IsDate, IsDefined, IsInt, IsString, IsUUID } from "class-validator";
+import { IsDate, IsDefined, IsInt, IsUUID } from "class-validator";
 import { Column, Entity, ObjectId, ObjectIdColumn } from "typeorm";
 
 @Entity("stock")
