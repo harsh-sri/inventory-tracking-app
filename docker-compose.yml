@@ -1,0 +1,35 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:latest
+    container_name: my_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+  otrium-assignment:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: otrium-assignment
+    ports:
+      - "3007:3007"
+      - "9228:9228"
+    env_file:
+      - ./.env
+    volumes:
+      - ./src:/otrium-assignment/src
+      - ./static:/otrium-assignment/static
+      - ./test:/otrium-assignment/test
+      - ./tsconfig.json:/otrium-assignment/tsconfig.json
+      - ./tsconfig.build.json:/otrium-assignment/tsconfig.build.json
+      - ./nest-cli.json:/otrium-assignment/nest-cli.json
+    restart: always
+
+volumes:
+  mongo-data:
+    driver: local

@@ -1,0 +1,11 @@
+FROM node:18.13.0-alpine3.17
+
+WORKDIR /otrium-assignment
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY ./scripts/populate.js ./scripts/populate.js
+
+CMD node ./scripts/populate.js && npm run start:debug
