@@ -1,26 +1,16 @@
-import { MongoRepository } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
 import { HttpStatusCodes } from "src/common/enums/http-status-codes.enum";
 import { StockService } from "./stock.service";
-import { StockEntity } from "../entities/stock.entity";
 import { AppLogger } from "src/core/logger";
 import { UpdateStockDto } from "../dto/update-stock.dto";
 import { HttpResponseMessage } from "src/common/enums/response-message.enum";
 import { NotificationService } from "src/notification/notification.service";
-
-class StockRepositoryFake {
-  // eslint-disable-next-line
-  async findOne() {}
-
-  // eslint-disable-next-line
-  async updateOne() {}
-}
+import { StockRepository } from "../repository/stock.repository";
 
 describe("StockService", () => {
   let service: StockService;
-  let stockRepository: MongoRepository<StockEntity>;
+  let mockStockRepository;
   let logger: AppLogger;
   let payload: UpdateStockDto;
   let productId;
@@ -35,6 +25,11 @@ describe("StockService", () => {
       debug: jest.fn(),
     };
 
+    mockStockRepository = {
+      findOne: jest.fn(),
+      updateOne: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
@@ -42,8 +37,8 @@ describe("StockService", () => {
           useValue: mockLogger,
         },
         {
-          provide: getRepositoryToken(StockEntity),
-          useClass: StockRepositoryFake,
+          provide: StockRepository,
+          useValue: mockStockRepository,
         },
         {
           provide: NotificationService,
@@ -56,7 +51,6 @@ describe("StockService", () => {
     }).compile();
 
     service = module.get<StockService>(StockService);
-    stockRepository = module.get(getRepositoryToken(StockEntity));
     logger = module.get<AppLogger>(AppLogger);
     jest.spyOn(logger, "setContext").mockImplementationOnce(() => null);
     jest.spyOn(logger, "error").mockImplementationOnce(() => null);
@@ -146,13 +140,15 @@ describe("StockService", () => {
   describe("patch", () => {
     it("should successfully update the product stock", async () => {
       const updatedAvailability = response.availability - payload.productCount;
-      jest.spyOn(stockRepository, "findOne").mockResolvedValueOnce(response);
+      jest
+        .spyOn(mockStockRepository, "findOne")
+        .mockResolvedValueOnce(response);
       jest
         .spyOn(service, "isStockPartiallyAvailable")
         .mockReturnValueOnce(false);
       jest.spyOn(service, "isStockAvailable").mockReturnValueOnce(true);
 
-      jest.spyOn(stockRepository, "updateOne").mockResolvedValueOnce({
+      jest.spyOn(mockStockRepository, "updateOne").mockResolvedValueOnce({
         ...response,
         availability: updatedAvailability,
       });
@@ -180,7 +176,9 @@ describe("StockService", () => {
 
     it("[Out Of Stock]should throw an error", async () => {
       response.availability = 0;
-      jest.spyOn(stockRepository, "findOne").mockResolvedValueOnce(response);
+      jest
+        .spyOn(mockStockRepository, "findOne")
+        .mockResolvedValueOnce(response);
       jest.spyOn(service, "isStockAvailable").mockReturnValueOnce(false);
 
       let err, result;
@@ -206,7 +204,9 @@ describe("StockService", () => {
 
     it("[Partial Stock Availability]should return partial stock available msg with 400 bad request", async () => {
       response.availability = 2;
-      jest.spyOn(stockRepository, "findOne").mockResolvedValueOnce(response);
+      jest
+        .spyOn(mockStockRepository, "findOne")
+        .mockResolvedValueOnce(response);
       jest.spyOn(service, "isStockAvailable").mockReturnValueOnce(true);
       jest
         .spyOn(service, "isStockPartiallyAvailable")

@@ -21,7 +21,9 @@ export class StockRepository implements IStockRepository {
   }
 
   async findOne(query: ObjectLiteral): Promise<StockEntity> {
-    return this.stockRepository.findOne(query);
+    return this.stockRepository.findOne({
+      where: query,
+    });
   }
 
   async updateOne(
