@@ -129,10 +129,10 @@ $ docker-compose up --build
 ### Sample Request
 
 ```bash
-$ curl --location --request PATCH 'localhost:3000/api/v1/stock/2c038cbc-0164-4ffd-a8a6-9a7cdbe8e703' \
+$ curl --location --request PATCH 'localhost:3000/api/v1/stock/6f7a3e2f-b442-4982-9e4a-4d829c11fffd' \
 --header 'Content-Type: application/json' \
 --data '{
-    "warehouseId": "56b10104-b4c3-4da0-9618-3bc0750d1f27",
+    "warehouseId": "317f7cf7-3ff4-4540-acf3-6b6a053efbaf",
     "productCount": 1
 }'
 ```
@@ -143,6 +143,12 @@ $ curl --location --request PATCH 'localhost:3000/api/v1/stock/2c038cbc-0164-4ff
 # unit tests
 $ npm run test
 ```
+
+- To Test APIs, please use following `productId` and `warehouseId`
+  - `productId: 6f7a3e2f-b442-4982-9e4a-4d829c11fffd`
+  - `warehouseId: 317f7cf7-3ff4-4540-acf3-6b6a053efbaf`
+
+Note: We can also generate the random productId and warehouseId. We need to update the `scripts/populate.js`
 
 ## API Docs
 

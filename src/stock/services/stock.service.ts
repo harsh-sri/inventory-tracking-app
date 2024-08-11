@@ -1,7 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { StockEntity } from "../entities/stock.entity";
-import { MongoRepository } from "typeorm";
 import { AppLogger } from "src/core/logger";
 import { UpdateStockDto } from "../dto/update-stock.dto";
 import { BadRequestException } from "src/common/exceptions/bad-request.exception";
@@ -11,12 +8,12 @@ import { BaseResponse } from "../serializers/base-response.class";
 import { ProductIdDto } from "../dto/product-id.dto";
 import { NotFoundException } from "src/common/exceptions/not-found.exception";
 import { NotificationService } from "src/notification/notification.service";
+import { StockRepository } from "../repository/stock.repository";
 
 @Injectable()
 export class StockService {
   constructor(
-    @InjectRepository(StockEntity)
-    private readonly stockRepository: MongoRepository<StockEntity>,
+    private readonly stockRepository: StockRepository,
     private readonly logger: AppLogger,
     private readonly notificationService: NotificationService,
   ) {
@@ -48,10 +45,8 @@ export class StockService {
         productCount,
       });
       const productStock = await this.stockRepository.findOne({
-        where: {
-          productId: prodId,
-          warehouseId,
-        },
+        productId: prodId,
+        warehouseId,
       });
 
       this.logger.debug("product stock", productStock);
