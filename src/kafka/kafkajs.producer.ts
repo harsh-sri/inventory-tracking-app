@@ -11,11 +11,13 @@ export class KafkajsProducer implements IProducer {
   constructor(
     private readonly topic: string,
     broker: string,
+    clientId: string,
+    timeout: number,
   ) {
     this.kafka = new Kafka({
-      clientId: "inventory-tracking-service",
+      clientId: clientId,
       brokers: [broker || "my_kafka_container:9092"],
-      requestTimeout: 30000,
+      requestTimeout: timeout,
     });
     this.producer = this.kafka.producer({ allowAutoTopicCreation: true });
     this.logger = new Logger(topic);
