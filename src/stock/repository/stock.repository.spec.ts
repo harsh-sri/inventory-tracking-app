@@ -1,12 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { v4 as uuid } from "uuid";
-import { StockRepository } from "./stock.repository";
 import { StockEntity } from "../entities/stock.entity";
 import { AppLogger } from "src/core/logger";
 import { ObjectLiteral } from "src/common/interfaces/object-literal.interface";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { ObjectId, UpdateResult } from "mongodb";
 import { IUpdateFilter } from "../interfaces/stock-repository.interface";
+import { DataSource, MongoRepository, QueryRunner } from "typeorm";
+import { ProductStockRepository } from "./stock.repository";
 
 class StockRepositoryFake {
   // eslint-disable-next-line
@@ -17,7 +18,8 @@ class StockRepositoryFake {
 }
 
 describe("StockRepository", () => {
-  let stockRepository: StockRepository;
+  let stockRepository: MongoRepository<StockEntity>;
+  let productStockRepoService: ProductStockRepository;
   let logger: AppLogger;
   let query: ObjectLiteral;
   let response: StockEntity;
@@ -25,6 +27,8 @@ describe("StockRepository", () => {
   let warehouseId: string;
   let updateFilter: IUpdateFilter;
   let updateResult: UpdateResult;
+  let mockConnection: DataSource;
+  let mockQueryRunner: QueryRunner;
 
   beforeEach(async () => {
     const mockLogger = {
@@ -33,6 +37,18 @@ describe("StockRepository", () => {
       error: jest.fn(),
       debug: jest.fn(),
     };
+
+    mockQueryRunner = {
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      rollbackTransaction: jest.fn(),
+      release: jest.fn(),
+    } as any;
+
+    mockConnection = {
+      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+    } as any;
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
@@ -43,11 +59,15 @@ describe("StockRepository", () => {
           provide: AppLogger,
           useValue: mockLogger,
         },
-        StockRepository,
+        { provide: DataSource, useValue: mockConnection },
+        ProductStockRepository,
       ],
     }).compile();
 
     stockRepository = module.get(getRepositoryToken(StockEntity));
+    productStockRepoService = module.get<ProductStockRepository>(
+      ProductStockRepository,
+    );
     logger = module.get<AppLogger>(AppLogger);
     jest.spyOn(logger, "setContext").mockImplementationOnce(() => null);
 
@@ -82,7 +102,7 @@ describe("StockRepository", () => {
   });
 
   it("should be defined", () => {
-    expect(stockRepository).toBeDefined();
+    expect(productStockRepoService).toBeDefined();
   });
 
   describe("findOne", () => {
@@ -90,7 +110,7 @@ describe("StockRepository", () => {
       let err, result;
       jest.spyOn(stockRepository, "findOne").mockResolvedValueOnce(response);
       try {
-        result = await stockRepository.findOne(query);
+        result = await productStockRepoService.findOne(query);
       } catch (e) {
         err = e;
       } finally {
@@ -98,7 +118,7 @@ describe("StockRepository", () => {
         expect(result).toBeDefined();
         expect(result).toEqual(response);
         expect(stockRepository.findOne).toHaveBeenCalledTimes(1);
-        expect(stockRepository.findOne).toHaveBeenCalledWith(query);
+        expect(stockRepository.findOne).toHaveBeenCalledWith({ where: query });
       }
     });
   });
@@ -110,7 +130,7 @@ describe("StockRepository", () => {
         .spyOn(stockRepository, "updateOne")
         .mockResolvedValueOnce(updateResult);
       try {
-        result = await stockRepository.updateOne(query, updateFilter);
+        result = await productStockRepoService.updateOne(query, updateFilter);
       } catch (e) {
         err = e;
       } finally {
@@ -122,6 +142,47 @@ describe("StockRepository", () => {
           query,
           updateFilter,
         );
+      }
+    });
+  });
+
+  describe("findAndUpdateOneUsingTransactions", () => {
+    it("should find, update and return new availability", async () => {
+      const query = {
+        productId: "someProductId",
+        warehouseId: "someWarehouseId",
+      };
+      const productCount = 2;
+      const product = new StockEntity();
+      product.availability = 10;
+
+      jest.spyOn(stockRepository, "findOne").mockResolvedValueOnce(product);
+      jest.spyOn(stockRepository, "updateOne").mockResolvedValueOnce({});
+      let err, result;
+
+      try {
+        result =
+          await productStockRepoService.findAndUpdateOneUsingTransactions(
+            query,
+            productCount,
+          );
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result).toBe(8);
+        expect(mockQueryRunner.connect).toHaveBeenCalled();
+        expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+        expect(stockRepository.findOne).toHaveBeenCalledWith({ where: query });
+        expect(stockRepository.updateOne).toHaveBeenCalledWith(query, {
+          $set: {
+            availability: 8,
+            updatedAt: expect.any(Date),
+          },
+        });
+        expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+        expect(mockQueryRunner.release).toHaveBeenCalled();
       }
     });
   });

@@ -17,7 +17,7 @@ import { UpdateStockDto } from "../dto/update-stock.dto";
 import { updateStockTags } from "src/common/docs/constants";
 
 @ApiTags(...updateStockTags)
-@Controller("v1")
+@Controller()
 export class UpdateStockController extends BaseController {
   constructor(
     private readonly service: StockService,
@@ -27,7 +27,7 @@ export class UpdateStockController extends BaseController {
     this.logger.setContext(UpdateStockController.name);
   }
 
-  @Patch("/stock/:productId")
+  @Patch("/v1/stock/:productId")
   @ApiOperation({
     operationId: "updateStock",
     summary: "UPDATE",
@@ -53,6 +53,37 @@ export class UpdateStockController extends BaseController {
       );
 
       return this.service.patch(validatedProductId, updateStockDto);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Patch("/v2/stock/:productId")
+  @ApiOperation({
+    operationId: "updateStock",
+    summary: "UPDATE",
+    description: "update stock of a given product using transactions",
+  })
+  @ApiCreatedResponse({
+    description: BaseResponse._description,
+    type: BaseResponse,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
+  async patchV2(
+    @Param() productId: ProductIdDto,
+    @Body(new ValidationPipe()) updateStockDto: UpdateStockDto,
+  ): Promise<BaseResponse> {
+    try {
+      const validationPipe = new ValidationPipe();
+      const validatedProductId: ProductIdDto = await validationPipe.transform(
+        productId,
+        {
+          type: "custom",
+          metatype: ProductIdDto,
+        },
+      );
+
+      return this.service.patchV2(validatedProductId, updateStockDto);
     } catch (e) {
       throw e;
     }
