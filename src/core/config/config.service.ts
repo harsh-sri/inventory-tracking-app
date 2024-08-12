@@ -32,4 +32,18 @@ export class ConfigService extends NestConfigService {
       url: this.get("NOTIFICATION_WEB_HOOK"),
     };
   }
+
+  get notification_threshold(): {
+    blocker: number;
+    critical: number;
+    medium: number;
+    low: number;
+  } {
+    return {
+      blocker: this.get("NOTIFICATION_STOCK_BLOCKER_THRESHOLD"),
+      critical: this.get("NOTIFICATION_STOCK_CRITICAL_THRESHOLD"),
+      medium: this.get("NOTIFICATION_STOCK_MEDIUM_THRESHOLD"),
+      low: this.get("NOTIFICATION_STOCK_LOW_THRESHOLD"),
+    };
+  }
 }
