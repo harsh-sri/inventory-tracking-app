@@ -6,7 +6,7 @@ import { AppLogger } from "src/core/logger";
 import { UpdateStockDto } from "../dto/update-stock.dto";
 import { HttpResponseMessage } from "src/common/enums/response-message.enum";
 import { NotificationService } from "src/notification/notification.service";
-import { StockRepository } from "../repository/stock.repository";
+import { ProductStockRepository } from "../repository/stock.repository";
 
 describe("StockService", () => {
   let service: StockService;
@@ -28,6 +28,7 @@ describe("StockService", () => {
     mockStockRepository = {
       findOne: jest.fn(),
       updateOne: jest.fn(),
+      findAndUpdateOneUsingTransactions: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -37,7 +38,7 @@ describe("StockService", () => {
           useValue: mockLogger,
         },
         {
-          provide: StockRepository,
+          provide: ProductStockRepository,
           useValue: mockStockRepository,
         },
         {
@@ -231,6 +232,43 @@ describe("StockService", () => {
         );
         expect(result.productStockData.availability).toBeDefined();
         expect(result.productStockData.availability).toEqual(2);
+      }
+    });
+  });
+
+  describe("patchV2", () => {
+    it("should successfully update the product stock using transactions", async () => {
+      const updatedAvailability = response.availability - payload.productCount;
+      jest
+        .spyOn(mockStockRepository, "findOne")
+        .mockResolvedValueOnce(response);
+      jest.spyOn(service, "validateStock").mockResolvedValueOnce({
+        isPartialStock: false,
+        availability: 100,
+      });
+
+      jest
+        .spyOn(mockStockRepository, "findAndUpdateOneUsingTransactions")
+        .mockResolvedValueOnce(updatedAvailability);
+      let err, result;
+      try {
+        result = await service.patchV2(productId, payload);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result.code).toBeDefined();
+        expect(result.code).toEqual(
+          HttpStatusCodes.SUCCESS_CODE_CREATED_OR_UPDATED,
+        );
+        expect(result.message).toBeDefined();
+        expect(result.message).toEqual(HttpResponseMessage.SUCCESS);
+        expect(result.productStockData).toBeDefined();
+        expect(result.productStockData.availability).toBeDefined();
+        expect(result.productStockData.availability).toEqual(
+          updatedAvailability,
+        );
       }
     });
   });

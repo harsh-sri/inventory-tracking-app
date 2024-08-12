@@ -8,12 +8,14 @@ import { BaseResponse } from "../serializers/base-response.class";
 import { ProductIdDto } from "../dto/product-id.dto";
 import { NotFoundException } from "src/common/exceptions/not-found.exception";
 import { NotificationService } from "src/notification/notification.service";
-import { StockRepository } from "../repository/stock.repository";
+import { StockEntity } from "../entities/stock.entity";
+import { IValidStockResponse } from "../interfaces/stock.interface";
+import { ProductStockRepository } from "../repository/stock.repository";
 
 @Injectable()
 export class StockService {
   constructor(
-    private readonly stockRepository: StockRepository,
+    private readonly stockRepository: ProductStockRepository,
     private readonly logger: AppLogger,
     private readonly notificationService: NotificationService,
   ) {
@@ -29,6 +31,63 @@ export class StockService {
     availability: number,
   ): boolean {
     return productCount > availability;
+  }
+
+  async findStock(
+    productIdDto: ProductIdDto,
+    updateStockDto: UpdateStockDto,
+  ): Promise<StockEntity> {
+    const productId = productIdDto.productId;
+    // 1. fetch product stock data from db
+    const { warehouseId } = updateStockDto;
+
+    const productStock = await this.stockRepository.findOne({
+      productId: productId,
+      warehouseId,
+    });
+
+    this.logger.debug("product stock", productStock);
+
+    return productStock;
+  }
+
+  async validateStock(
+    productIdDto: ProductIdDto,
+    updateStockDto: UpdateStockDto,
+  ): Promise<IValidStockResponse> {
+    const { productCount } = updateStockDto;
+    const productStock = await this.findStock(productIdDto, updateStockDto);
+
+    if (!productStock) {
+      throw new NotFoundException({
+        message: HttpResponseMessage.NOT_FOUND,
+        httpStatusCode: HttpStatusCodes.FAILED,
+        details: {
+          message: `stock with productId ${productIdDto.productId} and warehouseId: ${updateStockDto.warehouseId} does not exist`,
+        },
+      });
+    }
+    const { availability } = productStock;
+
+    if (!this.isStockAvailable(availability)) {
+      throw new BadRequestException({
+        message: HttpResponseMessage.NO_AVAILABILITY,
+        httpStatusCode: HttpStatusCodes.FAILED,
+        details: {
+          message: HttpResponseMessage.NO_AVAILABILITY,
+        },
+      });
+    } else if (this.isStockPartiallyAvailable(productCount, availability)) {
+      return {
+        availability,
+        isPartialStock: true,
+      };
+    }
+
+    return {
+      availability,
+      isPartialStock: false,
+    };
   }
 
   async patch(
@@ -101,6 +160,60 @@ export class StockService {
         availability: newAvailability,
       });
       // 6. return response
+      return new BaseResponse({
+        code: HttpStatusCodes.SUCCESS_CODE_CREATED_OR_UPDATED,
+        message: HttpResponseMessage.SUCCESS,
+        productStockData: {
+          availability: newAvailability,
+        },
+      });
+    } catch (e) {
+      this.logger.error("something went wrong", e);
+      throw e;
+    }
+  }
+
+  async patchV2(
+    productIdDto: ProductIdDto,
+    updateStockDto: UpdateStockDto,
+  ): Promise<BaseResponse> {
+    try {
+      const productId = productIdDto.productId;
+      const { warehouseId, productCount } = updateStockDto;
+      this.logger.debug("request payload patchV2", {
+        warehouseId,
+        productId: productId,
+        productCount,
+      });
+
+      const { isPartialStock, availability } = await this.validateStock(
+        productIdDto,
+        updateStockDto,
+      );
+
+      if (isPartialStock) {
+        return new BaseResponse({
+          code: HttpStatusCodes.FAILED,
+          message: HttpResponseMessage.PARTIAL_AVAILABILITY.replace(
+            "{number}",
+            availability.toString(),
+          ),
+          productStockData: {
+            availability,
+          },
+        });
+      }
+
+      const newAvailability =
+        await this.stockRepository.findAndUpdateOneUsingTransactions(
+          { productId: productId, warehouseId },
+          productCount,
+        );
+
+      this.notificationService.sendProductAvailabilityNotifSync({
+        availability: newAvailability,
+      });
+
       return new BaseResponse({
         code: HttpStatusCodes.SUCCESS_CODE_CREATED_OR_UPDATED,
         message: HttpResponseMessage.SUCCESS,
