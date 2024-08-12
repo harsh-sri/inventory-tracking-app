@@ -8,6 +8,7 @@ import {
   INotificationProductAvailabilityPayload,
   INotificationResponse,
 } from "./interfaces/notification.interface";
+import { NotificationSeverity } from "./enums/notification-severity.enum";
 
 describe("NotificationService", () => {
   let service: NotificationService;
@@ -30,6 +31,12 @@ describe("NotificationService", () => {
 
     const mockConfigService = {
       notification_webhook: { url: "http://webhook.url" },
+      notification_threshold: {
+        blocker: 0,
+        critical: 100,
+        medium: 1000,
+        low: 5000,
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -62,6 +69,60 @@ describe("NotificationService", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined();
+  });
+
+  describe("getNotifSeverity", () => {
+    it("should return the low notification severity", async () => {
+      let err, result;
+      try {
+        result = await service.getNotifSeverity(6000);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result).toEqual(NotificationSeverity.LOW);
+      }
+    });
+
+    it("should return the medium notification severity if availability is <= 1000", async () => {
+      let err, result;
+      try {
+        result = await service.getNotifSeverity(1000);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result).toEqual(NotificationSeverity.MEDIUM);
+      }
+    });
+
+    it("should return the critical notification severity if availability is <= 100", async () => {
+      let err, result;
+      try {
+        result = await service.getNotifSeverity(100);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result).toEqual(NotificationSeverity.CRITICAL);
+      }
+    });
+
+    it("should return the blocker notification severity if availability is <= 0", async () => {
+      let err, result;
+      try {
+        result = await service.getNotifSeverity(0);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result).toEqual(NotificationSeverity.BLOCKER);
+      }
+    });
   });
 
   describe("sendNotifSync", () => {
@@ -108,10 +169,27 @@ describe("NotificationService", () => {
         method: "POST",
         data: {
           availability: 10,
+          notificationSeverity: NotificationSeverity.CRITICAL,
         },
       };
 
       expect(httpService.request).toHaveBeenCalledWith(expectedRequestPayload);
+    });
+
+    it("should return true without sending the notification when notification severity is low", async () => {
+      const payload: INotificationProductAvailabilityPayload = {
+        availability: 10000,
+      };
+      let err, result;
+      try {
+        result = await service.sendProductAvailabilityNotifSync(payload);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBe(true);
+        expect(httpService.request).toHaveBeenCalledTimes(0);
+      }
     });
 
     it("should return false if the notification fails", async () => {
@@ -126,9 +204,16 @@ describe("NotificationService", () => {
 
       (httpService.request as jest.Mock).mockResolvedValue(mockResponse);
 
-      const result = await service.sendProductAvailabilityNotifSync(payload);
+      let err, result;
 
-      expect(result).toBe(false);
+      try {
+        result = await service.sendProductAvailabilityNotifSync(payload);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBe(false);
+      }
     });
 
     it("should return false and not throw an error if an exception occurs", async () => {
@@ -140,10 +225,17 @@ describe("NotificationService", () => {
 
       (httpService.request as jest.Mock).mockRejectedValue(error);
 
-      const result = await service.sendProductAvailabilityNotifSync(payload);
+      let err, result;
 
-      expect(result).toBe(false);
-      expect(logger.error).toHaveBeenCalledTimes(0);
+      try {
+        result = await service.sendProductAvailabilityNotifSync(payload);
+      } catch (e) {
+        err = e;
+      } finally {
+        expect(err).toBeUndefined();
+        expect(result).toBe(false);
+        expect(logger.error).toHaveBeenCalledTimes(0);
+      }
     });
   });
 });
