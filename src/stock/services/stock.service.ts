@@ -90,6 +90,14 @@ export class StockService {
     };
   }
 
+  /**
+   *
+   * @param productId
+   * @param updateStockDto
+   * @returns
+   *
+   * v1 patch: updating inventory without trasactions and sending notification synchronously
+   */
   async patch(
     productId: ProductIdDto,
     updateStockDto: UpdateStockDto,
@@ -173,6 +181,14 @@ export class StockService {
     }
   }
 
+  /**
+   *
+   * @param productId
+   * @param updateStockDto
+   * @returns
+   *
+   * v1 patch: updating inventory without trasactions and sending notification async
+   */
   async patchV2(
     productIdDto: ProductIdDto,
     updateStockDto: UpdateStockDto,
@@ -210,7 +226,7 @@ export class StockService {
           productCount,
         );
 
-      this.notificationService.sendProductAvailabilityNotifSync({
+      await this.notificationService.sendProductAvailabilityNotifAsync({
         availability: newAvailability,
       });
 

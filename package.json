@@ -33,6 +33,7 @@
     "bunyan": "^1.8.15",
     "class-validator": "^0.14.1",
     "joi": "^17.13.1",
+    "kafkajs": "^2.2.4",
     "lodash": "^4.17.21",
     "mongodb": "^5.9.2",
     "reflect-metadata": "^0.1.13",

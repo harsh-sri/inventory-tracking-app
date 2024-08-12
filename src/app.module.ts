@@ -6,6 +6,8 @@ import { StockModule } from "./stock/stock.module";
 import { LoggerModule } from "./core/logger";
 import { HttpModule } from "./infra/http/http.module";
 import { NotificationModule } from "./notification/notification.module";
+import { KafkaModule } from "./kafka/kafka.module";
+import { sLog } from "./common/constants/slog.constant";
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -26,9 +28,10 @@ import { NotificationModule } from "./notification/notification.module";
     HealthCheckModule,
     StockModule,
     HttpModule,
+    KafkaModule,
     NotificationModule,
   ],
   controllers: [],
-  providers: [ConfigService],
+  providers: [ConfigService, sLog],
 })
 export class AppModule {}
