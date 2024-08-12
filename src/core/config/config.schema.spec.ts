@@ -119,4 +119,86 @@ describe("Config Schema", () => {
       ).toEqual("NOTIFICATION_WEB_HOOK");
     });
   });
+
+  describe("NOTIFICATION_THRESHOLD", () => {
+    describe("NOTIFICATION_STOCK_BLOCKER_THRESHOLD", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.NOTIFICATION_STOCK_BLOCKER_THRESHOLD = undefined;
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_BLOCKER_THRESHOLD"
+          ],
+        ).toEqual(0);
+      });
+
+      it("should set NOTIFICATION_STOCK_BLOCKER_THRESHOLD value from process.env if its defined", async () => {
+        process.env.NOTIFICATION_STOCK_BLOCKER_THRESHOLD = "1";
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_BLOCKER_THRESHOLD"
+          ],
+        ).toEqual(1);
+      });
+    });
+
+    describe("NOTIFICATION_STOCK_CRITICAL_THRESHOLD", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.NOTIFICATION_STOCK_CRITICAL_THRESHOLD = undefined;
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_CRITICAL_THRESHOLD"
+          ],
+        ).toEqual(100);
+      });
+
+      it("should set NOTIFICATION_STOCK_CRITICAL_THRESHOLD value from process.env if its defined", async () => {
+        process.env.NOTIFICATION_STOCK_CRITICAL_THRESHOLD = "1";
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_CRITICAL_THRESHOLD"
+          ],
+        ).toEqual(1);
+      });
+    });
+
+    describe("NOTIFICATION_STOCK_MEDIUM_THRESHOLD", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.NOTIFICATION_STOCK_MEDIUM_THRESHOLD = undefined;
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_MEDIUM_THRESHOLD"
+          ],
+        ).toEqual(1000);
+      });
+
+      it("should set NOTIFICATION_STOCK_MEDIUM_THRESHOLD value from process.env if its defined", async () => {
+        process.env.NOTIFICATION_STOCK_MEDIUM_THRESHOLD = "1";
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_MEDIUM_THRESHOLD"
+          ],
+        ).toEqual(1);
+      });
+    });
+
+    describe("NOTIFICATION_STOCK_LOW_THRESHOLD", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.NOTIFICATION_STOCK_LOW_THRESHOLD = undefined;
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_LOW_THRESHOLD"
+          ],
+        ).toEqual(5000);
+      });
+
+      it("should set NOTIFICATION_STOCK_LOW_THRESHOLD value from process.env if its defined", async () => {
+        process.env.NOTIFICATION_STOCK_LOW_THRESHOLD = "1";
+        expect(
+          schema.validate(process.env).value[
+            "NOTIFICATION_STOCK_LOW_THRESHOLD"
+          ],
+        ).toEqual(1);
+      });
+    });
+  });
 });

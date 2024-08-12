@@ -7,6 +7,7 @@ import { ValidationPipe } from "src/common/pipes";
 import { NotificationModule } from "src/notification/notification.module";
 import { NotificationService } from "src/notification/notification.service";
 import { HttpModule } from "src/infra/http/http.module";
+import { StockRepository } from "./repository/stock.repository";
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { HttpModule } from "src/infra/http/http.module";
     HttpModule,
   ],
   controllers: [UpdateStockController],
-  providers: [StockService, ValidationPipe, NotificationService],
+  providers: [
+    StockService,
+    ValidationPipe,
+    NotificationService,
+    StockRepository,
+  ],
 })
 export class StockModule {}

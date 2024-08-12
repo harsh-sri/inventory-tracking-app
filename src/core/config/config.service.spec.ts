@@ -58,4 +58,20 @@ describe("ConfigService", () => {
       });
     });
   });
+
+  describe("notification_threshold", () => {
+    it("should return notification_threshold configuration", async () => {
+      process.env.NOTIFICATION_STOCK_BLOCKER_THRESHOLD = "1";
+      process.env.NOTIFICATION_STOCK_CRITICAL_THRESHOLD = "2";
+      process.env.NOTIFICATION_STOCK_MEDIUM_THRESHOLD = "3";
+      process.env.NOTIFICATION_STOCK_LOW_THRESHOLD = "4";
+
+      expect(service.notification_threshold).toEqual({
+        blocker: "1",
+        critical: "2",
+        medium: "3",
+        low: "4",
+      });
+    });
+  });
 });
