@@ -12,9 +12,12 @@ export const schema = Joi.object({
   MONGO_MAX_POOL_SIZE: Joi.number().default(10),
 
   //Notification Threshold
+  NOTIFICATION_STOCK_BLOCKER_THRESHOLD: Joi.number().default(0),
+  NOTIFICATION_STOCK_CRITICAL_THRESHOLD: Joi.number().default(100),
+  NOTIFICATION_STOCK_MEDIUM_THRESHOLD: Joi.number().default(1000),
+  NOTIFICATION_STOCK_LOW_THRESHOLD: Joi.number().default(5000),
 
   // Notification webhook config
-
   NOTIFICATION_WEB_HOOK: Joi.string().default(
     "https://40764935-920f-4a4a-a354-e3da2e244e38.mock.pstmn.io/notification",
   ),
