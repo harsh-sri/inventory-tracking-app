@@ -19,7 +19,10 @@ export class KafkajsProducer implements IProducer {
       brokers: [broker || "my_kafka_container:9092"],
       requestTimeout: timeout,
     });
-    this.producer = this.kafka.producer({ allowAutoTopicCreation: true });
+    this.producer = this.kafka.producer({
+      allowAutoTopicCreation: true,
+      idempotent: true,
+    });
     this.logger = new Logger(topic);
   }
 
