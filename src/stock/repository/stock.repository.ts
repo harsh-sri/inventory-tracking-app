@@ -5,19 +5,20 @@ import {
 } from "../interfaces/stock-repository.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StockEntity } from "../entities/stock.entity";
-import { MongoRepository, Document } from "typeorm";
+import { MongoRepository, Document, DataSource } from "typeorm";
 import { AppLogger } from "src/core/logger";
 import { ObjectLiteral } from "src/common/interfaces/object-literal.interface";
 import { UpdateResult } from "mongodb";
 
 @Injectable()
-export class StockRepository implements IStockRepository {
+export class ProductStockRepository implements IStockRepository {
   constructor(
     @InjectRepository(StockEntity)
     private readonly stockRepository: MongoRepository<StockEntity>,
     private readonly logger: AppLogger,
+    private readonly connection: DataSource,
   ) {
-    this.logger.setContext(StockRepository.name);
+    this.logger.setContext(ProductStockRepository.name);
   }
 
   async findOne(query: ObjectLiteral): Promise<StockEntity> {
@@ -31,5 +32,35 @@ export class StockRepository implements IStockRepository {
     updateFilter: IUpdateFilter,
   ): Promise<Document | UpdateResult> {
     return this.stockRepository.updateOne(query, updateFilter);
+  }
+
+  async findAndUpdateOneUsingTransactions(
+    query: ObjectLiteral,
+    productCount: number,
+  ): Promise<number> {
+    let newAvailability: number;
+    const queryRunner = this.connection.createQueryRunner("master");
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const product = await this.findOne(query);
+      newAvailability = product.availability - productCount;
+      await this.updateOne(query, {
+        $set: {
+          availability: newAvailability,
+          updatedAt: new Date(),
+        },
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+      return newAvailability;
+    }
   }
 }

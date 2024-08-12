@@ -9,6 +9,7 @@ import {
   INotificationResponse,
 } from "./interfaces/notification.interface";
 import { NotificationSeverity } from "./enums/notification-severity.enum";
+import { ProducerService } from "src/kafka/producer.service";
 
 describe("NotificationService", () => {
   let service: NotificationService;
@@ -53,6 +54,12 @@ describe("NotificationService", () => {
         {
           provide: HttpService,
           useValue: mockHttpService,
+        },
+        {
+          provide: ProducerService,
+          useValue: {
+            produce: jest.fn(),
+          },
         },
       ],
     }).compile();

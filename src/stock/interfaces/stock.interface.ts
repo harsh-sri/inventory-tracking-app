@@ -10,3 +10,7 @@ export interface IProductStock extends IProductAvailability {
 }
 
 export interface IProductStockResponse extends IProductAvailability {}
+
+export interface IValidStockResponse extends IProductAvailability {
+  isPartialStock: boolean;
+}

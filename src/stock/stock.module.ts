@@ -7,10 +7,12 @@ import { ValidationPipe } from "src/common/pipes";
 import { NotificationModule } from "src/notification/notification.module";
 import { NotificationService } from "src/notification/notification.service";
 import { HttpModule } from "src/infra/http/http.module";
-import { StockRepository } from "./repository/stock.repository";
+import { ProductStockRepository } from "./repository/stock.repository";
+import { KafkaModule } from "src/kafka/kafka.module";
 
 @Module({
   imports: [
+    KafkaModule,
     TypeOrmModule.forFeature([StockEntity]),
     NotificationModule,
     HttpModule,
@@ -20,7 +22,7 @@ import { StockRepository } from "./repository/stock.repository";
     StockService,
     ValidationPipe,
     NotificationService,
-    StockRepository,
+    ProductStockRepository,
   ],
 })
 export class StockModule {}
