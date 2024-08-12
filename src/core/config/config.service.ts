@@ -46,4 +46,16 @@ export class ConfigService extends NestConfigService {
       low: this.get("NOTIFICATION_STOCK_LOW_THRESHOLD"),
     };
   }
+
+  get kafka(): {
+    broker: string;
+    sleepTime: number;
+    topic: string;
+  } {
+    return {
+      broker: this.get("KAFKA_BROKER"),
+      sleepTime: this.get("KAFKA_SLEEP_TIME"),
+      topic: this.get("KAFKA_TOPIC"),
+    };
+  }
 }

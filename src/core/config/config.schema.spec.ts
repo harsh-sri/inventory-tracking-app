@@ -201,4 +201,54 @@ describe("Config Schema", () => {
       });
     });
   });
+
+  describe("KAFKA", () => {
+    describe("KAFKA_BROKER", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.KAFKA_BROKER = undefined;
+        expect(schema.validate(process.env).value["KAFKA_BROKER"]).toEqual(
+          "my_kafka_container:9092",
+        );
+      });
+
+      it("should set KAFKA_BROKER value from process.env if its defined", async () => {
+        process.env.KAFKA_BROKER = "localhost:3000";
+        expect(schema.validate(process.env).value["KAFKA_BROKER"]).toEqual(
+          "localhost:3000",
+        );
+      });
+    });
+
+    describe("KAFKA_SLEEP_TIME", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.KAFKA_SLEEP_TIME = undefined;
+        expect(schema.validate(process.env).value["KAFKA_SLEEP_TIME"]).toEqual(
+          5000,
+        );
+      });
+
+      it("should set KAFKA_SLEEP_TIME value from process.env if its defined", async () => {
+        process.env.KAFKA_SLEEP_TIME = "3000";
+        expect(schema.validate(process.env).value["KAFKA_SLEEP_TIME"]).toEqual(
+          3000,
+        );
+      });
+    });
+
+    describe("KAFKA_TOPIC", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.KAFKA_TOPIC = undefined;
+        expect(schema.validate(process.env).value["KAFKA_TOPIC"]).toEqual(
+          "inventory_tracking_notif",
+        );
+      });
+
+      it("should set KAFKA_TOPIC value from process.env if its defined", async () => {
+        process.env.KAFKA_TOPIC = "test";
+        expect(schema.validate(process.env).value["KAFKA_TOPIC"]).toEqual(
+          "test",
+        );
+      });
+    });
+  });
 });

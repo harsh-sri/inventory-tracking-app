@@ -3,11 +3,13 @@ import { ConfigService } from "src/core";
 import { AppLogger } from "src/core/logger";
 import { HttpService } from "src/infra/http/http.service";
 import {
+  INotificationAsyncPayload,
   INotificationPayload,
   INotificationProductAvailabilityPayload,
   INotificationResponse,
 } from "./interfaces/notification.interface";
 import { NotificationSeverity } from "./enums/notification-severity.enum";
+import { ProducerService } from "src/kafka/producer.service";
 
 @Injectable()
 export class NotificationService {
@@ -16,6 +18,7 @@ export class NotificationService {
     private readonly logger: AppLogger,
     private readonly config: ConfigService,
     private readonly httpService: HttpService,
+    private readonly producerService: ProducerService,
   ) {
     this.logger.setContext(NotificationService.name);
     // notification webhook
@@ -79,5 +82,33 @@ export class NotificationService {
       // lets not break the end user flow during the checkout
       return false;
     }
+  }
+
+  async sendProductAvailabilityNotifAsync(
+    payload: INotificationProductAvailabilityPayload,
+  ): Promise<boolean> {
+    const { availability } = payload;
+
+    const notificationSeverity = await this.getNotifSeverity(availability);
+
+    // only send notification when severity is > low. We can also use severity to decide what type of notification we want to send
+    // this is being done to avoid sending too many notifications. eg. for each order we dont need to send notif if we have enough stock
+
+    if (notificationSeverity === NotificationSeverity.LOW) {
+      return true;
+    }
+
+    const requestPayload: INotificationAsyncPayload = {
+      availability,
+      notificationSeverity,
+    };
+
+    const inventoryTrackingNotifTopic = this.config?.kafka?.topic;
+    // send message to kafka
+    await this.producerService.produce(inventoryTrackingNotifTopic, {
+      value: JSON.stringify(requestPayload),
+    });
+
+    return true;
   }
 }

@@ -45,6 +45,7 @@ describe("StockService", () => {
           provide: NotificationService,
           useValue: {
             sendProductAvailabilityNotifSync: jest.fn(),
+            sendProductAvailabilityNotifAsync: jest.fn(),
           },
         },
         StockService,

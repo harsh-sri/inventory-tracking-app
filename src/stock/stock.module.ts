@@ -8,9 +8,11 @@ import { NotificationModule } from "src/notification/notification.module";
 import { NotificationService } from "src/notification/notification.service";
 import { HttpModule } from "src/infra/http/http.module";
 import { ProductStockRepository } from "./repository/stock.repository";
+import { KafkaModule } from "src/kafka/kafka.module";
 
 @Module({
   imports: [
+    KafkaModule,
     TypeOrmModule.forFeature([StockEntity]),
     NotificationModule,
     HttpModule,

@@ -22,6 +22,11 @@ export const schema = Joi.object({
     "https://40764935-920f-4a4a-a354-e3da2e244e38.mock.pstmn.io/notification",
   ),
 
+  // Kafka
+  KAFKA_BROKER: Joi.string().default("my_kafka_container:9092"), // TODO: this should be an array of brokers
+  KAFKA_SLEEP_TIME: Joi.number().default(5000),
+  KAFKA_TOPIC: Joi.string().default("inventory_tracking_notif"),
+
   // Logger
   LOG_NAME: Joi.string()
     .description("name of the log")
