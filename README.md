@@ -51,6 +51,28 @@ I have defined the following `notification severity levels`. These values are co
 
 ![screenshot](assets/v1-architecture.png)
 
+## V1 Architecture Limitations
+
+- Notification module is tightly coupled with inventory module
+- Notification is being sent syncronously
+- Inventory change log is not stored any where
+- Notification log is not store any where
+- Analytics is missing
+
+## Architecture Diagram v2
+
+- Inventory tracking app & Notification app is loosely couppled
+- Both apps are horizontally scalable
+
+![screenshot](assets/v2-architecture.png)
+
+## V2 Architecture Limitations
+
+- Inventory change log is not stored any where
+- Notification log is not store any where
+- Analytics is missing
+- A bit expensive solution
+
 ## Prerequisite
 
 - Docker
