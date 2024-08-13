@@ -166,6 +166,7 @@ export class StockService {
       // 5. send notification async manner. Notification service will check threshold value
       this.notificationService.sendProductAvailabilityNotifSync({
         availability: newAvailability,
+        productId: prodId,
       });
       // 6. return response
       return new BaseResponse({
@@ -228,6 +229,7 @@ export class StockService {
 
       await this.notificationService.sendProductAvailabilityNotifAsync({
         availability: newAvailability,
+        productId,
       });
 
       return new BaseResponse({

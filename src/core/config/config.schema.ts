@@ -26,6 +26,8 @@ export const schema = Joi.object({
   KAFKA_BROKER: Joi.string().default("my_kafka_container:9092"), // TODO: this should be an array of brokers
   KAFKA_SLEEP_TIME: Joi.number().default(5000),
   KAFKA_TOPIC: Joi.string().default("inventory_tracking_notif"),
+  KAFKA_CLIENT_ID: Joi.string().default("inventory-tracking-service"),
+  KAFKA_REQUEST_TIMEOUT: Joi.number().default(30000),
 
   // Logger
   LOG_NAME: Joi.string()

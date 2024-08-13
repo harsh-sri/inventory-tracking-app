@@ -51,11 +51,15 @@ export class ConfigService extends NestConfigService {
     broker: string;
     sleepTime: number;
     topic: string;
+    clientId: string;
+    timeout: number;
   } {
     return {
       broker: this.get("KAFKA_BROKER"),
       sleepTime: this.get("KAFKA_SLEEP_TIME"),
       topic: this.get("KAFKA_TOPIC"),
+      clientId: this.get("KAFKA_CLIENT_ID"),
+      timeout: this.get("KAFKA_REQUEST_TIMEOUT"),
     };
   }
 }

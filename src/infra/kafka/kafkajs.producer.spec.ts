@@ -7,10 +7,12 @@ describe("KafkajsProducer", () => {
   let kafkajsProducer;
   const topic = "kafkajs-test-topic";
   const broker = "kafka-broker";
+  const clientId = "client-id";
+  const timeout = 100;
   const message = { value: "message" };
 
   beforeEach(() => {
-    kafkajsProducer = new KafkajsProducer(topic, broker);
+    kafkajsProducer = new KafkajsProducer(topic, broker, clientId, timeout);
     kafkajsProducer.producer = {
       send: jest.fn(),
       connect: jest.fn(),
@@ -25,8 +27,8 @@ describe("KafkajsProducer", () => {
   it("should initialize Kafka, Producer, and Logger correctly", () => {
     expect(Kafka).toHaveBeenCalledWith({
       brokers: [broker],
-      clientId: "inventory-tracking-service",
-      requestTimeout: 30000,
+      clientId: "client-id",
+      requestTimeout: 100,
     });
     expect(kafkajsProducer.producer).toBeDefined();
   });

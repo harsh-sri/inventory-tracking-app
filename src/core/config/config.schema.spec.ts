@@ -250,5 +250,37 @@ describe("Config Schema", () => {
         );
       });
     });
+
+    describe("KAFKA_CLIENT_ID", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.KAFKA_CLIENT_ID = undefined;
+        expect(schema.validate(process.env).value["KAFKA_CLIENT_ID"]).toEqual(
+          "inventory-tracking-service",
+        );
+      });
+
+      it("should set KAFKA_CLIENT_ID value from process.env if its defined", async () => {
+        process.env.KAFKA_CLIENT_ID = "test";
+        expect(schema.validate(process.env).value["KAFKA_CLIENT_ID"]).toEqual(
+          "test",
+        );
+      });
+    });
+
+    describe("KAFKA_REQUEST_TIMEOUT", () => {
+      it("should use default value if not defined in the process.env", async () => {
+        process.env.KAFKA_REQUEST_TIMEOUT = undefined;
+        expect(
+          schema.validate(process.env).value["KAFKA_REQUEST_TIMEOUT"],
+        ).toEqual(30000);
+      });
+
+      it("should set KAFKA_REQUEST_TIMEOUT value from process.env if its defined", async () => {
+        process.env.KAFKA_REQUEST_TIMEOUT = "100";
+        expect(
+          schema.validate(process.env).value["KAFKA_REQUEST_TIMEOUT"],
+        ).toEqual(100);
+      });
+    });
   });
 });

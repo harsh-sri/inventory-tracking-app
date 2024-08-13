@@ -9,7 +9,7 @@ import {
   INotificationResponse,
 } from "./interfaces/notification.interface";
 import { NotificationSeverity } from "./enums/notification-severity.enum";
-import { ProducerService } from "src/kafka/producer.service";
+import { ProducerService } from "src/infra/kafka/producer.service";
 
 describe("NotificationService", () => {
   let service: NotificationService;
@@ -158,6 +158,7 @@ describe("NotificationService", () => {
     it("should return true if the notification is sent successfully", async () => {
       const payload: INotificationProductAvailabilityPayload = {
         availability: 10,
+        productId: "1",
       };
 
       const mockResponse: INotificationResponse = {
@@ -176,6 +177,7 @@ describe("NotificationService", () => {
         method: "POST",
         data: {
           availability: 10,
+          productId: "1",
           notificationSeverity: NotificationSeverity.CRITICAL,
         },
       };
@@ -186,6 +188,7 @@ describe("NotificationService", () => {
     it("should return true without sending the notification when notification severity is low", async () => {
       const payload: INotificationProductAvailabilityPayload = {
         availability: 10000,
+        productId: "1",
       };
       let err, result;
       try {
@@ -202,6 +205,7 @@ describe("NotificationService", () => {
     it("should return false if the notification fails", async () => {
       const payload: INotificationProductAvailabilityPayload = {
         availability: 10,
+        productId: "1",
       };
 
       const mockResponse: INotificationResponse = {
@@ -226,6 +230,7 @@ describe("NotificationService", () => {
     it("should return false and not throw an error if an exception occurs", async () => {
       const payload: INotificationProductAvailabilityPayload = {
         availability: 10,
+        productId: "1",
       };
 
       const error = new Error("Network Error");

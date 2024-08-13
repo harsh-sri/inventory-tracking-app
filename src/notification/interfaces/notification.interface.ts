@@ -1,18 +1,12 @@
-import { NotificationSeverity } from "../enums/notification-severity.enum";
-
 export interface INotificationProductAvailabilityPayload {
   availability: number;
+  productId: string;
 }
 
 export interface INotificationPayload {
   url: string;
   method: string;
   data: any;
-}
-
-export interface INotificationAsyncPayload
-  extends INotificationProductAvailabilityPayload {
-  notificationSeverity: NotificationSeverity;
 }
 
 export interface INotificationResponse {
