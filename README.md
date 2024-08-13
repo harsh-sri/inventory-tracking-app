@@ -68,6 +68,7 @@ I have defined the following `notification severity levels`. These values are co
 
 - Inventory tracking app & Notification app is loosely couppled
 - Both apps are horizontally scalable
+- [Notification Consumer](https://github.com/harsh-sri/notification-consumer)
 
 ![screenshot](assets/v2-architecture.png)
 
@@ -114,6 +115,50 @@ $ cd inventory-tracking-app
 - Create a `.env` file in the project root folder
 - Copy the env keys from `env.sample` and provide the correct values
 
+## Running the app
+
+1. Create a docker network
+
+```bash
+$ docker network create my_kafka_network
+```
+
+2. Start the application using Docker. App will run on PORT 3000
+
+```bash
+$ docker-compose up --build
+```
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+```
+
+### Sample Request
+
+```bash
+$ curl --location --request PATCH 'localhost:3000/api/v1/stock/6f7a3e2f-b442-4982-9e4a-4d829c11fffd' \
+--header 'Content-Type: application/json' \
+--data '{
+    "warehouseId": "317f7cf7-3ff4-4540-acf3-6b6a053efbaf",
+    "productCount": 1
+}'
+```
+
+- To Test APIs, please use following `productId` and `warehouseId`
+  - `productId: 6f7a3e2f-b442-4982-9e4a-4d829c11fffd`
+  - `warehouseId: 317f7cf7-3ff4-4540-acf3-6b6a053efbaf`
+
+Note: We can also generate the random productId and warehouseId. We need to update the `scripts/populate.js`
+
+## API Docs
+
+```
+http://localhost:3000/docs
+```
+
 ## Directory Structure
 
 ```
@@ -152,50 +197,6 @@ $ cd inventory-tracking-app
 │       └── services
 ├── static
 └── test
-```
-
-## Running the app
-
-1. Create a docker network
-
-```bash
-$ docker network create my_kafka_network
-```
-
-2. Start the application using Docker. App will run on PORT 3000
-
-```bash
-$ docker-compose up --build
-```
-
-### Sample Request
-
-```bash
-$ curl --location --request PATCH 'localhost:3000/api/v1/stock/6f7a3e2f-b442-4982-9e4a-4d829c11fffd' \
---header 'Content-Type: application/json' \
---data '{
-    "warehouseId": "317f7cf7-3ff4-4540-acf3-6b6a053efbaf",
-    "productCount": 1
-}'
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-```
-
-- To Test APIs, please use following `productId` and `warehouseId`
-  - `productId: 6f7a3e2f-b442-4982-9e4a-4d829c11fffd`
-  - `warehouseId: 317f7cf7-3ff4-4540-acf3-6b6a053efbaf`
-
-Note: We can also generate the random productId and warehouseId. We need to update the `scripts/populate.js`
-
-## API Docs
-
-```
-http://localhost:3000/docs
 ```
 
 ### Notes
