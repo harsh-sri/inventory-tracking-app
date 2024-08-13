@@ -1,8 +1,14 @@
 version: "3"
 
+networks:
+  my_kafka_network:
+    external: true
+
 services:
   mongo:
     image: mongo:latest
+    networks:
+      - my_kafka_network
     container_name: my_mongo
     restart: always
     ports:
@@ -15,6 +21,8 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.1
+    networks:
+      - my_kafka_network
     container_name: zookeeper
     restart: always
     ports:
@@ -25,6 +33,8 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.4.1
+    networks:
+      - my_kafka_network
     container_name: my_kafka_container
     restart: always
     ports:
@@ -48,6 +58,8 @@ services:
       context: .
       dockerfile: Dockerfile.local
     container_name: inventory-tracking-service
+    networks:
+      - my_kafka_network
     depends_on:
       - mongo
       - kafka
