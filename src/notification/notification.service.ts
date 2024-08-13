@@ -9,7 +9,7 @@ import {
   INotificationResponse,
 } from "./interfaces/notification.interface";
 import { NotificationSeverity } from "./enums/notification-severity.enum";
-import { ProducerService } from "src/kafka/producer.service";
+import { ProducerService } from "src/infra/kafka/producer.service";
 
 @Injectable()
 export class NotificationService {

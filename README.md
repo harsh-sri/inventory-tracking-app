@@ -151,7 +151,13 @@ $ cd inventory-tracking-app
 
 ## Running the app
 
-Start the application using Docker. App will run on PORT 3000
+1. Create a docker network
+
+```bash
+$ docker network create my_kafka_network
+```
+
+2. Start the application using Docker. App will run on PORT 3000
 
 ```bash
 $ docker-compose up --build
