@@ -30,7 +30,7 @@ export class UpdateStockController extends BaseController {
   @Patch("/v1/stock/:productId")
   @ApiOperation({
     operationId: "updateStock",
-    summary: "UPDATE",
+    summary: "Update API V1",
     description: "update stock of a given product",
   })
   @ApiCreatedResponse({
@@ -60,8 +60,8 @@ export class UpdateStockController extends BaseController {
 
   @Patch("/v2/stock/:productId")
   @ApiOperation({
-    operationId: "updateStock",
-    summary: "UPDATE",
+    operationId: "updateStockV2",
+    summary: "Update API V2",
     description: "update stock of a given product using transactions",
   })
   @ApiCreatedResponse({
