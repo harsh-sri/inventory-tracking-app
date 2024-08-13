@@ -79,6 +79,14 @@ I have defined the following `notification severity levels`. These values are co
 - Analytics is missing
 - A bit expensive solution
 
+## V3 Architecture
+
+- Serverless solution
+- Instead of `message queue`, this architecture is based on `event-sourcing architecture`
+- Not implemented, just an idea to present more cost effective and efficient solution
+
+![screenshot](assets/v3-architecture.png)
+
 ## Prerequisite
 
 - Docker
