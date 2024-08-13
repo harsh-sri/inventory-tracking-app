@@ -3,7 +3,6 @@ import { ConfigService } from "src/core";
 import { AppLogger } from "src/core/logger";
 import { HttpService } from "src/infra/http/http.service";
 import {
-  INotificationAsyncPayload,
   INotificationPayload,
   INotificationProductAvailabilityPayload,
   INotificationResponse,
@@ -52,7 +51,7 @@ export class NotificationService {
     payload: INotificationProductAvailabilityPayload,
   ): Promise<boolean> {
     try {
-      const { availability } = payload;
+      const { availability, productId } = payload;
 
       const notificationSeverity = await this.getNotifSeverity(availability);
 
@@ -67,6 +66,7 @@ export class NotificationService {
         method: "POST",
         data: {
           availability,
+          productId,
           notificationSeverity,
         },
       };
@@ -87,20 +87,12 @@ export class NotificationService {
   async sendProductAvailabilityNotifAsync(
     payload: INotificationProductAvailabilityPayload,
   ): Promise<boolean> {
-    const { availability } = payload;
+    const { availability, productId } = payload;
 
-    const notificationSeverity = await this.getNotifSeverity(availability);
-
-    // only send notification when severity is > low. We can also use severity to decide what type of notification we want to send
-    // this is being done to avoid sending too many notifications. eg. for each order we dont need to send notif if we have enough stock
-
-    if (notificationSeverity === NotificationSeverity.LOW) {
-      return true;
-    }
-
-    const requestPayload: INotificationAsyncPayload = {
+    // notification severity will be calculated by notification consumer
+    const requestPayload: INotificationProductAvailabilityPayload = {
       availability,
-      notificationSeverity,
+      productId,
     };
 
     const inventoryTrackingNotifTopic = this.config?.kafka?.topic;
