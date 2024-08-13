@@ -146,6 +146,8 @@ $ npm run test
 
 ### Sample Request
 
+1. V1 API
+
 ```bash
 $ curl --location --request PATCH 'localhost:3000/api/v1/stock/6f7a3e2f-b442-4982-9e4a-4d829c11fffd' \
 --header 'Content-Type: application/json' \
@@ -154,6 +156,19 @@ $ curl --location --request PATCH 'localhost:3000/api/v1/stock/6f7a3e2f-b442-498
     "productCount": 1
 }'
 ```
+
+2. V2 API
+
+```bash
+$ curl --location --request PATCH 'localhost:3000/api/v2/stock/6f7a3e2f-b442-4982-9e4a-4d829c11fffd' \
+--header 'Content-Type: application/json' \
+--data '{
+    "warehouseId": "317f7cf7-3ff4-4540-acf3-6b6a053efbaf",
+    "productCount": 1
+}'
+```
+
+**Note: Difference between v1 & v2 apis is, v1 api is not using transactions when updating stock while v2 api is using transactions**
 
 - To Test APIs, please use following `productId` and `warehouseId`
   - `productId: 6f7a3e2f-b442-4982-9e4a-4d829c11fffd`
