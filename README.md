@@ -43,6 +43,11 @@ I have defined the following `notification severity levels`. These values are co
 - `Medium` --> Will be send when stock is `<=1000`
 - `Low` --> Notification will not be sent when stock is `<=5000`
 
+### Notification Payload
+
+- `availability`, current product availability
+- `productId`
+
 ## Architecture Diagram v1
 
 - This service is exposing an API to update product stock. If the stock goes below predefined threshold then this service will send the nofication using webhook
